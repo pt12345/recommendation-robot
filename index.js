@@ -3,23 +3,32 @@
 const youTubeKey = 'AIzaSyA5CfZ3ObPO2iBVszTgDhMuG-69Hcn8-Ko'; 
 const youTubeURL = 'https://www.googleapis.com/youtube/v3/search?';
 
-const testeKey = '397350-PeterTar-FY2VDEP8';
-const tasteUrl = '';
+const tasteKey = '397350-PeterTar-FY2VDEP8';
+const tasteUrl = 'https://tastedive.com/api/similar?';
 
-function getStatus() {
-  const url = `${lolStatusURL}api_key=${lolKey}`;
+function tasteCallback(json) {
+  console.log("hi");
+  console.log(json);
+}
 
-  fetch(url)
-  .then(response => {
-    if (response.ok) {
-      return response.json();
-    }
-    throw new Error(response.statusText);
-  })
-  .then(responseJson => console.log(responseJson))
-  .catch(err => {
-    $('#js-error-message').text(`Something went wrong: ${err.message}`);
+function getSimilar() {
+  const url = `${tasteUrl}api_key=${tasteKey}&q=mozart&callback=tasteCallback`;
+
+  var settings = {
+    "url": "https://tastedive.com/api/similar?api_key=397350-PeterTar-FY2VDEP8&q=mozart&callback=tasteCallback",
+    "dataType": "jsonp",
+    "method": "GET",
+    "jsonpCallback": "tasteCallback",
+    "timeout": 0,
+    "headers": {
+      "Cookie": "__cfduid=d6087458c6a8933416cec86fef6ae0a381609518849; tk_s=.eJxNjEEKgCAQAL8Se-7S1ScEncSz2Cq1UCvkGoj09wwKus4MU2GL6IQig6qAJMWy2wMoGANTargHjJnlKBajf4TRP_bGhkmC77Q4CanplGdPJ6X2tcMXTYQrLY7hum7UbyoJ.EtJBag.ojkJHihavGP0q35xrpYB0SThvbE"
+    },
+  };
+  
+  $.ajax(settings).done(function (response) {
+    //console.log(response);
   });
+
 }
 
 function getYouTubeVideos() {
@@ -54,7 +63,7 @@ function getYouTubeVideos() {
 
   function watchPage() {
     getYouTubeVideos();
-    getStatus();
+    getSimilar();
   }
   
   $(watchPage);
