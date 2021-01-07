@@ -6,8 +6,19 @@ const youTubeURL = 'https://www.googleapis.com/youtube/v3/search?';
 const tasteKey = '397350-PeterTar-FY2VDEP8';
 const tasteUrl = 'https://tastedive.com/api/similar?';
 
+const etsyKey = 'q51b5thfg4uwjx8xvps4te4s';
+const etsyURL = 'https://openapi.etsy.com/v2/listings/';
+
 function tasteCallback(json) {
   console.log("hi");
+  console.log(json.Similar.Results[0].Name);
+
+  getYouTubeVideos(json.Similar.Results[0].Name);
+  getEtsy(json.Similar.Results[0].Name);
+}
+
+function etsyCallback(json) {
+  console.log("etsy");
   console.log(json);
 }
 
@@ -20,9 +31,6 @@ function getSimilar() {
     "method": "GET",
     "jsonpCallback": "tasteCallback",
     "timeout": 0,
-    "headers": {
-      "Cookie": "__cfduid=d6087458c6a8933416cec86fef6ae0a381609518849; tk_s=.eJxNjEEKgCAQAL8Se-7S1ScEncSz2Cq1UCvkGoj09wwKus4MU2GL6IQig6qAJMWy2wMoGANTargHjJnlKBajf4TRP_bGhkmC77Q4CanplGdPJ6X2tcMXTYQrLY7hum7UbyoJ.EtJBag.ojkJHihavGP0q35xrpYB0SThvbE"
-    },
   };
   
   $.ajax(settings).done(function (response) {
@@ -31,10 +39,28 @@ function getSimilar() {
 
 }
 
-function getYouTubeVideos() {
+function getEtsy(etsySearch) {
 
-  const url = `${youTubeURL}key=${youTubeKey}
-    &q=League%20of%Legends&part=snippet&macResults=10`;
+  var settings = {
+    "url": "https://openapi.etsy.com/v2/listings/active?callback=getData&api_key=q51b5thfg4uwjx8xvps4te4s&keywords=dog",
+    "dataType": "jsonp",
+    "method": "GET",
+    "success": "etsyCallback",
+  };
+
+
+  $.ajax({
+    url: `https://openapi.etsy.com/v2/listings/active.js?callback=getData&api_key=q51b5thfg4uwjx8xvps4te4s&keywords=${etsySearch}`,
+    dataType: 'jsonp',
+    success: function(data) {
+    console.log(data);
+  }
+  });
+}
+
+function getYouTubeVideos(videoSearch) {
+
+  const url = `${youTubeURL}key=${youTubeKey}&q=${videoSearch}&part=snippet&macResults=10`;
 
     fetch(url)
       .then(response => {
@@ -50,7 +76,7 @@ function getYouTubeVideos() {
   }
 
   function displayVideos(responseJson) {
-    
+    console.log(responseJson);
     for (let i = 0; i < responseJson.items.length; i++){  
         $('#video-list').append(`<li>
         <h3>${responseJson.items[i].snippet.title}</h3>
@@ -62,8 +88,9 @@ function getYouTubeVideos() {
 }
 
   function watchPage() {
-    getYouTubeVideos();
+    
     getSimilar();
+    
   }
   
   $(watchPage);
