@@ -4,23 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="index.css">
-    <title>LoL API Capstone</title>
+    <title>Recommendation Generator</title>
 </head>
 <body>
-    <header>League of Legends</header>
-    <main>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/cMzyLBuFm4A" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>        <div id="left">
-            <h2>Game Status</h2>
-            <div id="status"></div>
-        </div>
-        <div id="middle">
-            <h2>League Info</h2>
-        </div>
-        <div id="right">
+    <header>Recommendation Generator</header>
 
-            <h2>Top Videos</h2>
-            <ul id="video-list">
-            </ul>
+    <form>
+        <label for="search">Find Recommended:</label>
+        <input type="text" id="search" name="search" required><br><br>
+        <input type="submit">
+     </form>
+
+    <main>
+        <div id="products">
+
+            <h2 class="product-header hidden">Recommended Products</h2>
+            <ul id="product-list"></ul>
+
+        </div>
+        <div id="videos">
+
+            <h2 class="video-header hidden">Recommended Videos</h2>
+            <ul id="video-list"></ul>
             
         </div>
     </main>
@@ -28,7 +33,5 @@
 
     <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
     <script src="index.js"></script>
-
-    <!--<script src="https://tastedive.com/api/similar?api_key=397350-PeterTar-FY2VDEP8&q=mozart&callback=tasteCallback"></script>-->
 </body>
 </html>

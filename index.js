@@ -9,24 +9,56 @@ const tasteUrl = 'https://tastedive.com/api/similar?';
 const etsyKey = 'q51b5thfg4uwjx8xvps4te4s';
 const etsyURL = 'https://openapi.etsy.com/v2/listings/';
 
+function watchForm() {
+  $('form').submit(event => {
+    event.preventDefault();
+    let search = $('#search').val();
+
+    let searchString = search.replace(/\s/g, '+')
+
+    console.log('search string = ' + searchString);
+
+    getSimilar(searchString);
+  });
+}
+
 function tasteCallback(json) {
-  console.log("hi");
-  console.log(json.Similar.Results[0].Name);
-
-  getYouTubeVideos(json.Similar.Results[0].Name);
-  getEtsy(json.Similar.Results[0].Name);
-}
-
-function etsyCallback(json) {
-  console.log("etsy");
+  console.log("similar")
   console.log(json);
+
+  let randomNum = Math.floor(Math.random() * json.Similar.Results.length);
+  getYouTubeVideos(json.Similar.Results[randomNum].Name);
+
+  randomNum = Math.floor(Math.random() * json.Similar.Results.length);
+  getEtsy(json.Similar.Results[randomNum].Name);
+
+  
+   
 }
 
-function getSimilar() {
+function etsyCallback(responseJson) {
+  console.log("etsy");
+  console.log(responseJson.results);
+
+  for (let i = 0; i < responseJson.results.length; i++){  
+    $('#product-list').append(`<li class="products hidden">
+    <img src=${responseJson.results[i].MainImage.url_170x135}
+    <h3>${responseJson.results[i].title}</h3>
+    </li>`)
+  }
+
+  $('.product-header').removeClass('hidden');
+  $('.products').removeClass('hidden');  
+}
+
+
+function getSimilar(search) {
+  console.log("search");
+  console.log(search);
   const url = `${tasteUrl}api_key=${tasteKey}&q=mozart&callback=tasteCallback`;
 
   var settings = {
-    "url": "https://tastedive.com/api/similar?api_key=397350-PeterTar-FY2VDEP8&q=mozart&callback=tasteCallback",
+    "url": `https://tastedive.com/api/similar?api_key=397350-PeterTar-FY2VDEP8&q=${search}&callback=tasteCallback`,
     "dataType": "jsonp",
     "method": "GET",
     "jsonpCallback": "tasteCallback",
@@ -41,26 +73,25 @@ function getSimilar() {
 
 function getEtsy(etsySearch) {
 
-  var settings = {
-    "url": "https://openapi.etsy.com/v2/listings/active?callback=getData&api_key=q51b5thfg4uwjx8xvps4te4s&keywords=dog",
-    "dataType": "jsonp",
-    "method": "GET",
-    "success": "etsyCallback",
-  };
+  let searchString = etsySearch.replace(/\s/g, '+');
 
+  console.log("estsy search = " + searchString);
 
   $.ajax({
-    url: `https://openapi.etsy.com/v2/listings/active.js?callback=getData&api_key=q51b5thfg4uwjx8xvps4te4s&keywords=${etsySearch}`,
+    url: `https://openapi.etsy.com/v2/listings/active.js?callback=getData&api_key=q51b5thfg4uwjx8xvps4te4s&keywords=${searchString}&includes=MainImage`,
     dataType: 'jsonp',
-    success: function(data) {
-    console.log(data);
-  }
+    success: etsyCallback,
   });
+
 }
 
 function getYouTubeVideos(videoSearch) {
 
-  const url = `${youTubeURL}key=${youTubeKey}&q=${videoSearch}&part=snippet&macResults=10`;
+  let searchString = videoSearch.replace(/\s/g, '+');
+
+  console.log("youtube search = " + searchString);
+
+  const url = `${youTubeURL}key=${youTubeKey}&q=${searchString}&part=snippet&macResults=10`;
 
     fetch(url)
       .then(response => {
@@ -76,21 +107,21 @@ function getYouTubeVideos(videoSearch) {
   }
 
   function displayVideos(responseJson) {
+    console.log("youtube")
     console.log(responseJson);
     for (let i = 0; i < responseJson.items.length; i++){  
-        $('#video-list').append(`<li>
+        $('#video-list').append(`<li class="videos hidden">
         <h3>${responseJson.items[i].snippet.title}</h3>
-        <img src=${responseJson.items[i].snippet.thumbnails.default.url} alt="Video Thumbnail">
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/${responseJson.items[i].id.videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </li>`)
     }
 
-    $('#results').removeClass('hidden');   
+    $('.video-header').removeClass('hidden');
+    $('.videos').removeClass('hidden');
 }
 
-  function watchPage() {
-    
-    getSimilar();
-    
+  function watchPage() {  
+    watchForm();
   }
   
   $(watchPage);
