@@ -22,9 +22,7 @@ function watchForm() {
 function tasteCallback(json) {
   console.log("similar")
   console.log(json);
-
-  //let randomNum = Math.floor(Math.random() * json.Similar.Results.length);
-  //getYouTubeVideos(json.Similar.Results[randomNum].Name); 
+ 
   getYouTubeVideos(json.Similar.Results); 
 }
 
@@ -97,21 +95,4 @@ function watchPage() {
   watchForm();
 }
   
-  $(watchPage);
-
-
-/*
-function getEtsy(etsySearch) {
-
-  let searchString = etsySearch.replace(/\s/g, '+');
-
-  console.log("estsy search = " + searchString);
-
-  $.ajax({
-    url: `https://openapi.etsy.com/v2/listings/active.js?callback=getData&keywords=${searchString}&includes=MainImage`,
-    dataType: 'jsonp',
-    success: etsyCallback,
-  });
-
-}
-*/
+$(watchPage);
