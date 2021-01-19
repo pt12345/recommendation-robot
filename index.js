@@ -8,81 +8,80 @@ const tasteUrl = 'https://tastedive.com/api/similar?';
 
 function watchForm() {
   $('form').submit(event => {
+
     event.preventDefault();
     let search = $('#search').val();
 
     let searchString = search.replace(/\s/g, '+')
-
-    console.log('search string = ' + searchString);
 
     getSimilar(searchString);
   });
 }
 
 function tasteCallback(json) {
-  console.log("similar")
-  console.log(json);
- 
   getYouTubeVideos(json.Similar.Results); 
 }
 
 function getSimilar(search) {
-  console.log("search");
-  console.log(search);
-  const url = `${tasteUrl}api_key=${tasteKey}&q=mozart&callback=tasteCallback`;
-
   var settings = {
-    "url": `https://tastedive.com/api/similar?api_key=397350-PeterTar-FY2VDEP8&q=${search}&callback=tasteCallback`,
+    "url": `${tasteUrl}api_key=${tasteKey}&q=${search}&callback=tasteCallback`,
     "dataType": "jsonp",
     "method": "GET",
     "jsonpCallback": "tasteCallback",
     "timeout": 0,
   };
   
-  $.ajax(settings).done(function (response) {
-    //console.log(response);
-  });
-
+  $.ajax(settings).done(function (response) {});
 }
 
 function getYouTubeVideos(similarResults) {
 
-  $('.videos').remove();
+  // Check if results are found before adding to the page
+  if(similarResults.length === 0 && $("#footer-text").text() === "Enjoy...") {
+    $("#footer-text").text("No results found.");
+  }
+  else if(similarResults.length === 0) {
+    $(".robot-font").text("No results found.");
+  }
+  else {
 
-  for(let i=0;i<3 && i<similarResults.length;i++) {
+    $("#footer-text").text("Enjoy...");
 
-    let randomNum = Math.floor(Math.random() * similarResults.length);
+    $('.videos').remove();
+    $('.delete').remove();
 
-    let searchString = similarResults[randomNum].Name.replace(/\s/g, '+');
+    for(let i=0;i<3 && i<similarResults.length;i++) {
 
-    similarResults.splice(randomNum,1);
+      // Generate random number for index value
+      let randomNum = Math.floor(Math.random() * similarResults.length);
 
-    console.log("Similar Results = " + similarResults);
+      let searchString = similarResults[randomNum].Name.replace(/\s/g, '+');
 
-    const url = `${youTubeURL}key=${youTubeKey}&q=${searchString}&part=snippet&maxResults=2`;
+      // Remove value to prevent duplicate results
+      similarResults.splice(randomNum,1);
 
-    fetch(url)
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error(response.statusText);
-      })
-      .then(responseJson => displayVideos(responseJson))
-      .catch(err => {
-        $('#js-error-message').text(`Something went wrong: ${err.message}`);
-      });
-      
+      const url = `${youTubeURL}key=${youTubeKey}&q=${searchString}&part=snippet&maxResults=2`;
+
+      fetch(url)
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw new Error(response.statusText);
+        })
+        .then(responseJson => displayVideos(responseJson))
+        .catch(err => {
+          $('#js-error-message').text(`Something went wrong: ${err.message}`);
+        });
+        
     }
+  }
 }
 
 function displayVideos(responseJson) {
-  console.log("youtube")
-  console.log(responseJson);
 
-  for (let i = 0; i < responseJson.items.length; i++){  
+    for (let i = 0; i < responseJson.items.length; i++){  
       $('#video-list').append(`<li class="videos hidden">
-      <h3>${responseJson.items[i].snippet.title}</h3>
       <iframe width="560" height="315" src="https://www.youtube.com/embed/${responseJson.items[i].id.videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </li>`)
   }
