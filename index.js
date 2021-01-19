@@ -12,7 +12,7 @@ function watchForm() {
     event.preventDefault();
     let search = $('#search').val();
 
-    let searchString = search.replace(/\s/g, '+')
+    let searchString = encodeURI(search);
 
     getSimilar(searchString);
   });
@@ -55,7 +55,7 @@ function getYouTubeVideos(similarResults) {
       // Generate random number for index value
       let randomNum = Math.floor(Math.random() * similarResults.length);
 
-      let searchString = similarResults[randomNum].Name.replace(/\s/g, '+');
+      let searchString = encodeURI(similarResults[randomNum].Name);
 
       // Remove value to prevent duplicate results
       similarResults.splice(randomNum,1);
